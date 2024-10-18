@@ -68,6 +68,7 @@ model File {
   id              String     @id @default(cuid())
   fileName        String
   originalName    String
+  fileSize        Int        @default(0)
   pageCount       Int
   chunkCount      Int
   summary         String?    @db.Text

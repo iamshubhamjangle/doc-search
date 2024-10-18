@@ -8,8 +8,9 @@ import {
 import { Label } from "@/app/(client)/_components/ui/label";
 import { Input } from "@/app/(client)/_components/ui/input";
 import { Button } from "@/app/(client)/_components/ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface FileUploadResponse {
   success: boolean;
@@ -21,6 +22,9 @@ interface FileUploadResponse {
 export function FileUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -68,6 +72,7 @@ export function FileUpload() {
           `File processed successfully. Found ${data.pageCount} pages.`
         );
         console.log("Upload response:", data);
+        router.refresh();
       } else {
         const errorText = await response.text();
         toast.error(`Upload failed: ${errorText}`);
@@ -78,6 +83,10 @@ export function FileUpload() {
       toast.error("Error uploading the file. Please try again.");
     } finally {
       setIsLoading(false);
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Clear the file input field
+      }
     }
   };
 
@@ -89,6 +98,7 @@ export function FileUpload() {
             File
           </Label>
           <Input
+            ref={fileInputRef}
             id="file"
             type="file"
             placeholder="File"

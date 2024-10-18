@@ -286,6 +286,7 @@ export async function POST(req: NextRequest) {
       data: {
         fileName: uniqueFileName,
         originalName: file.name,
+        fileSize: file.size,
         pageCount: 0,
         chunkCount: 0,
         status: "PROCESSING",

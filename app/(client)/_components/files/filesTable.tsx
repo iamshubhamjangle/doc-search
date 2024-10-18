@@ -25,8 +25,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/(client)/_components/ui/table";
+import { serverAuth } from "@/app/_lib/serverAuth";
+import prisma from "@/app/_lib/db";
+import { formatFileSize } from "@/app/_lib/utils";
 
-const FilesTable = () => {
+const FilesTable = async () => {
+  const session = await serverAuth();
+
+  const files = await prisma.file.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+    select: {
+      id: true,
+      originalName: true,
+      status: true,
+      createdAt: true,
+      processingError: true,
+      fileSize: true,
+    },
+  });
+
   return (
     <Card className="my-4">
       <CardHeader>
@@ -47,33 +66,43 @@ const FilesTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">
-                Laser Lemonade Machine
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline">Processed</Badge>
-              </TableCell>
-              <TableCell className="hidden md:table-cell">2 MB</TableCell>
-              <TableCell className="hidden md:table-cell">
-                2023-07-12 10:42 AM
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button aria-haspopup="true" size="icon" variant="ghost">
-                      <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+            {files.map((file) => {
+              return (
+                <TableRow key={file.id}>
+                  <TableCell className="font-medium">
+                    {file.originalName}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{file.status}</Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {formatFileSize(file.fileSize)}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {file.createdAt.toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </CardContent>
