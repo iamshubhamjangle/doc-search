@@ -354,3 +354,44 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await serverAuth();
+    if (!session) return new NextResponse("Unauthorized", { status: 401 });
+    const userId = session.user.id;
+
+    const searchParams = req.nextUrl.searchParams;
+    const fileId = searchParams.get("id");
+
+    if (!fileId) return new NextResponse("fileId is required", { status: 400 });
+
+    const index = await getPineconeDevIndex();
+
+    const file = await prisma.file.findUnique({
+      where: {
+        id: fileId,
+        userId,
+      },
+      select: {
+        vectorIds: true,
+      },
+    });
+
+    if (!file) return new NextResponse("Access Denied", { status: 401 });
+
+    // Delete all vectors with matching fileId in metadata
+    await index.deleteMany(file.vectorIds);
+
+    console.log(`Deleted all vectors for fileId: ${fileId}`);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting vectors:", error);
+    return new NextResponse(
+      `Error deleting vectors: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
+      { status: 500 }
+    );
+  }
+}
