@@ -1,9 +1,15 @@
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { v4 as uuidv4 } from "uuid";
 import { NextRequest, NextResponse } from "next/server";
 
-// Types for better code organization
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { PineconeRecord, RecordMetadata } from "@pinecone-database/pinecone";
+
+import prisma from "@/app/_lib/db";
+import { serverAuth } from "@/app/_lib/serverAuth";
+import { getPineconeDevIndex } from "@/app/_lib/pinecone";
+
 interface ProcessedDocument {
   pageContent: string;
   metadata: {
@@ -16,10 +22,21 @@ interface ProcessedDocument {
 // Configuration constants
 const CHUNK_SIZE = 1000;
 const CHUNK_OVERLAP = 200;
-const OPENAI_MODEL = "text-embedding-ada-002";
+// https://platform.openai.com/docs/guides/embeddings/embedding-models
+const OPENAI_MODEL = "text-embedding-3-small";
 
 /**
- * Processes PDF file and extracts text content
+ * Generates a unique filename with timestamp
+ */
+function generateUniqueFileName(originalName: string): string {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const uniqueId = uuidv4().slice(0, 8);
+  const extension = originalName.split(".").pop();
+  return `${originalName.split(".")[0]}-${timestamp}-${uniqueId}.${extension}`;
+}
+
+/**
+ * Step 2: Processes PDF file and extracts text content
  */
 async function processPdfFile(file: File): Promise<ProcessedDocument[]> {
   try {
@@ -33,10 +50,10 @@ async function processPdfFile(file: File): Promise<ProcessedDocument[]> {
       throw new Error("No content found in PDF");
     }
 
-    console.log(`Successfully processed PDF with ${docs.length} pages`);
+    console.log(`STEP 2: Successfully processed PDF with ${docs.length} pages`);
     return docs;
   } catch (error) {
-    console.error("PDF processing error:", error);
+    console.error("STEP 2: PDF processing error:", error);
     throw new Error(
       `PDF processing failed: ${
         error instanceof Error ? error.message : "Unknown error"
@@ -46,7 +63,7 @@ async function processPdfFile(file: File): Promise<ProcessedDocument[]> {
 }
 
 /**
- * Splits documents into smaller chunks for better processing
+ * Step 3: Splits documents into smaller chunks for better processing
  */
 async function splitDocuments(
   docs: ProcessedDocument[]
@@ -69,10 +86,12 @@ async function splitDocuments(
       },
     }));
 
-    console.log(`Split into ${docsWithChunkNumbers.length} chunks`);
+    console.log(
+      `Step 3: File is Split into ${docsWithChunkNumbers.length} chunks`
+    );
     return docsWithChunkNumbers;
   } catch (error) {
-    console.error("Document splitting error:", error);
+    console.error("Step 3: Document splitting error:", error);
     throw new Error(
       `Document splitting failed: ${
         error instanceof Error ? error.message : "Unknown error"
@@ -101,15 +120,136 @@ async function generateEmbeddings(
       docs.map((doc) => doc.pageContent)
     );
 
-    console.log(`Generated embeddings for ${vectors.length} chunks`);
+    console.log(`Step 4: Generated embeddings for ${vectors.length} chunks`);
     return { chunks: docs, vectors };
   } catch (error) {
-    console.error("Embedding generation error:", error);
+    console.error("Step 4: Embedding generation error:", error);
     throw new Error(
       `Embedding generation failed: ${
         error instanceof Error ? error.message : "Unknown error"
       }`
     );
+  }
+}
+
+/**
+ * Chunks array into smaller arrays of specified size
+ */
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+/**
+ * Stores vectors in Pinecone with metadata
+ */
+async function storeVectorsInPinecone(
+  vectors: number[][],
+  chunks: ProcessedDocument[],
+  fileId: string,
+  fileName: string,
+  userId: string
+): Promise<string[]> {
+  try {
+    const index = await getPineconeDevIndex();
+
+    // Prepare vectors with metadata
+    const records: PineconeRecord<RecordMetadata>[] = vectors.map(
+      (vector, i) => ({
+        id: `${fileId}-chunk-${i}`,
+        values: vector,
+        metadata: {
+          fileId,
+          fileName,
+          pageNumber: chunks[i].metadata.page || 0,
+          chunkNumber: chunks[i].metadata.chunk || i,
+          userId,
+        },
+      })
+    );
+
+    // Split records into batches (200 is recommended by Pinecone)
+    const batches = chunkArray(records, 200);
+
+    console.log(
+      `Step 5: Preparing to upload ${records.length} vectors in ${batches.length} batches`
+    );
+
+    try {
+      // Upload all batches in parallel
+      await Promise.all(
+        batches.map(async (batch, batchIndex) => {
+          try {
+            await index.upsert(batch);
+            console.log(
+              `Step 5: Completed batch ${batchIndex + 1}/${batches.length}`
+            );
+          } catch (error) {
+            console.error(`Step 5: Error in batch ${batchIndex + 1}:`, error);
+            throw error; // Re-throw to be caught by the outer try-catch
+          }
+        })
+      );
+    } catch (error) {
+      console.error("Step 5: Error during parallel batch upload:", error);
+      throw new Error("Failed to upload one or more batches to Pinecone");
+    }
+
+    console.log(
+      `Step 5: Successfully stored ${records.length} vectors in Pinecone`
+    );
+    return records.map((record) => record.id);
+  } catch (error) {
+    console.error("Step 5: Pinecone storage error:", error);
+    throw new Error(
+      `Failed to store vectors: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+}
+
+/**
+ * Generates a summary of the document using GPT-4
+ */
+async function generateSummary(docs: ProcessedDocument[]): Promise<string> {
+  try {
+    // const openai = new OpenAI({
+    //   apiKey: process.env.OPENAI_API_KEY!,
+    // });
+
+    // // Combine first few chunks for summary
+    // const textForSummary = docs
+    //   .slice(0, 3)
+    //   .map(doc => doc.pageContent)
+    //   .join("\n");
+
+    // const response = await openai.chat.completions.create({
+    //   model: "gpt-4-turbo-preview",
+    //   messages: [
+    //     {
+    //       role: "system",
+    //       content: "You are a helpful assistant that creates concise document summaries.",
+    //     },
+    //     {
+    //       role: "user",
+    //       content: `Please provide a brief summary (2-3 sentences) of the following document:\n\n${textForSummary}`,
+    //     },
+    //   ],
+    //   temperature: 0.5,
+    //   max_tokens: 150,
+    // });
+    //
+    // return response.choices[0]?.message?.content || "Summary not available";
+    console.log("Step 6: File Summary Generation is disabled");
+
+    return "Summary not available";
+  } catch (error) {
+    console.error("Step 6: Summary generation error:", error);
+    return "Failed to generate summary";
   }
 }
 
@@ -120,6 +260,10 @@ export async function POST(req: NextRequest) {
   console.log("Document processing endpoint hit");
 
   try {
+    const session = await serverAuth();
+    if (!session) return new NextResponse("Unauthorized", { status: 401 });
+    const userId = session.user.id;
+
     // Step 1: Get and validate file
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -132,6 +276,23 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Only PDF files are supported", { status: 400 });
     }
 
+    // Generate unique filename
+    const uniqueFileName = generateUniqueFileName(file.name);
+
+    console.log(`STEP 1: File processing started for '${uniqueFileName}'`);
+
+    // Create initial database entry with status processing
+    const fileEntry = await prisma.file.create({
+      data: {
+        fileName: uniqueFileName,
+        originalName: file.name,
+        pageCount: 0,
+        chunkCount: 0,
+        status: "PROCESSING",
+        userId,
+      },
+    });
+
     // Step 2: Process PDF
     const docs = await processPdfFile(file);
 
@@ -141,26 +302,45 @@ export async function POST(req: NextRequest) {
     // Step 4: Generate embeddings
     const { chunks, vectors } = await generateEmbeddings(splitDocs);
 
-    // Step 5: Prepare response
+    // Step 5: Store vectors in Pinecone
+    const vectorIds = await storeVectorsInPinecone(
+      vectors,
+      chunks,
+      fileEntry.id,
+      uniqueFileName,
+      userId
+    );
+
+    // Step 6: Generate summary
+    const summary = await generateSummary(docs);
+
+    // Step 7: Update database entry
+    const updatedFile = await prisma.file.update({
+      where: { id: fileEntry.id },
+      data: {
+        pageCount: docs.length,
+        chunkCount: chunks.length,
+        status: "COMPLETED",
+        vectorIds,
+        summary,
+      },
+    });
+    console.log(`Step 7: File processing completed for: ${uniqueFileName}`);
+
+    // Step 8: Prepare response
     const response = {
       success: true,
-      filename: file.name,
-      stats: {
-        originalPages: docs.length,
-        chunks: chunks.length,
-        vectorDimensions: vectors[0]?.length ?? 0,
-        averageChunkLength: Math.round(
-          chunks.reduce((acc, chunk) => acc + chunk.pageContent.length, 0) /
-            chunks.length
-        ),
+      file: {
+        id: updatedFile.id,
+        fileName: updatedFile.fileName,
+        originalName: updatedFile.originalName,
+        summary,
+        stats: {
+          pageCount: updatedFile.pageCount,
+          chunkCount: updatedFile.chunkCount,
+          vectorCount: vectorIds.length,
+        },
       },
-      chunks: chunks.map((chunk, i) => ({
-        id: i + 1,
-        pageNumber: chunk.metadata.page,
-        chunkNumber: chunk.metadata.chunk,
-        contentPreview: chunk.pageContent.substring(0, 100) + "...",
-        vectorLength: vectors[i]?.length,
-      })),
     };
 
     return NextResponse.json(response);
