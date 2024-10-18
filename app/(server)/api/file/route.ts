@@ -383,6 +383,13 @@ export async function DELETE(req: NextRequest) {
     // Delete all vectors with matching fileId in metadata
     await index.deleteMany(file.vectorIds);
 
+    await prisma.file.delete({
+      where: {
+        id: fileId,
+        userId,
+      },
+    });
+
     console.log(`Deleted all vectors for fileId: ${fileId}`);
     return NextResponse.json({ success: true });
   } catch (error) {

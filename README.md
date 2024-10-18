@@ -1,67 +1,43 @@
-Using https://console.neon.tech/app/projects/wandering-sky-87653498
+## Dashboards
+
+[Pinecode Vector DB](https://app.pinecone.io/)
+[Postgres DB](https://console.neon.tech)
+[OpenAI Console](https://platform.openai.com/usage)
 
 ## Getting Started
 
-Install the dependencies
+1. Install the dependencies
 
 ```
 npm i
 ```
 
-Edit the `.env` file
+2. Create `.env` file using `.env.example` file as reference
 
-```
-# To generate 32 bit secret > openssl rand -base64 32 | paste --delimiters '' --serial
-NODE_ENV="development"
+3. Run `npx prisma migrate dev` to sync database and application
 
-# Database
-DATABASE_URL=postgres://postgres:postgres@localhost:5432/DB_NAME
-DIRECT_URL=postgres://postgres:postgres@localhost:5432/DB_NAME
-# DATABASE_URL=postgres://username:password@host.render.com/DB_NAME
-# DIRECT_URL=postgres://username:password@host.render.com/DB_NAME
-# SHADOW_DATABASE_URL=...
-
-# Next Auth
-NEXTAUTH_URL=http://localhost:3000/
-NEXTAUTH_SECRET="..."
-GOOGLE_CLIENT_ID="..."
-GOOGLE_CLIENT_SECRET="..."
-
-# Reset Password >
-JWT_RESET_PASSWORD_SECRET="..."
-
-# Email Services
-# Base URL is Used while sending email for forgot-password template
-BASE_URL="http://localhost:3000"
-# AWS SES keys
-AWS_SES_USER_ACCESS_KEY="..."
-AWS_SES_USER_ACCESS_SECRET="..."
-AWS_SES_REGION="us-east-2"
-AWS_SES_SENDER="yourverifiedemail@gmail.com"
-```
-
-## After Create/Modifing the Prisma schema
-
-```
-npx prisma migrate dev --name migration-name --create-only
-// Edit any migrations if required (Major changes/Conflicts)
-npx prisma migrate dev
-// Restart the prisma studio
-```
-
-Run the development server:
+4. Run the development server:
 
 ```
 npm run dev
 ```
 
-Run Prisma Studio to view DB entries in browser
+5. Run Prisma Studio to view DB entries in browser
 
 ```
 npm run db
 ```
 
 Open http://localhost:3000 with your browser to see the result.
+
+## Database migrations
+
+```bash
+# After Modifing the Prisma schema, to push changes to DB run
+npx prisma migrate dev --name "migration-name"
+
+# Add --create-only flag to only create sql migration file and not apply it.
+```
 
 ## Setting up AWS SES (Simple Email Service)
 
