@@ -1,6 +1,14 @@
 "use client";
 
-import { Bot, Code, Files, LogIn, LogOut } from "lucide-react";
+import {
+  Bot,
+  Code,
+  Files,
+  LogIn,
+  LogOut,
+  Settings,
+  UserCircle2,
+} from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/app/(client)/_components/ui/theme-toggle";
 import { usePathname, useRouter } from "next/navigation";
@@ -26,6 +34,18 @@ const navList = [
     icon: Code,
     position: "bottom",
     href: "https://github.com/iamshubhamjangle?tab=repositories",
+  },
+  {
+    title: "Settings",
+    icon: Settings,
+    position: "bottom",
+    href: "/settings",
+  },
+  {
+    title: "Profile",
+    icon: UserCircle2,
+    position: "bottom",
+    href: "/profile",
   },
 ];
 
