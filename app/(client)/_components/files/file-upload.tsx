@@ -7,7 +7,7 @@ import {
 } from "@/app/(client)/_components/ui/card";
 import { Label } from "@/app/(client)/_components/ui/label";
 import { Input } from "@/app/(client)/_components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/(client)/_components/ui/button";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";

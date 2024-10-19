@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/(client)/_components/ui/button";
 import { Input } from "@/app/(client)/_components/ui/input";
 import { Label } from "@/app/(client)/_components/ui/label";
 import Link from "next/link";

@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { ThemeToggle } from "@/app/(client)/_components/ui/theme-toggle";
 import { usePathname, useRouter } from "next/navigation";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "../ui/button";
 import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 

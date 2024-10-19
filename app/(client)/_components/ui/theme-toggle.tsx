@@ -4,7 +4,7 @@ import * as React from "react";
 import { useTheme } from "next-themes";
 import { Moon, Settings, Sun } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/(client)/_components/ui/button";
 import {
   Tooltip,
   TooltipContent,

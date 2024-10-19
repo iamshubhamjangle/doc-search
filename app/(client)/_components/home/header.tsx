@@ -4,7 +4,7 @@ import { Menu, Package2 } from "lucide-react";
 import { CONSTANTS } from "@/app/_lib/constants";
 
 import NavItems from "@/app/(client)/_components/home/navItems";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/(client)/_components/ui/button";
 import {
   Sheet,
   SheetContent,

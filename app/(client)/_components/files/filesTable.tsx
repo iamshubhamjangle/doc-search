@@ -1,7 +1,7 @@
 import { MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/app/(client)/_components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/(client)/_components/ui/button";
 import {
   Card,
   CardContent,
