@@ -2,11 +2,10 @@
 
 import { Bot, Code, Files, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
-import { ThemeToggle } from "@/app/(client)/_components/ui/theme-toggle";
 import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
-import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import Logout from "./logout";
 
 const navList = [
   {
@@ -83,25 +82,18 @@ const NavItems = () => {
 
         {/* SignIn & Signout */}
         {!session?.user && (
-          <Button
-            className="flex items-center gap-3 rounded-lg px-3 py-2"
-            onClick={() => signIn("google")}
+          <Link
+            href={"/login"}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
           >
-            <LogIn className="h-4 w-4" />
-            Login
-          </Button>
+            <Button className="flex items-center gap-3 rounded-lg px-3 py-2">
+              <LogIn className="h-4 w-4" />
+              Login
+            </Button>
+          </Link>
         )}
 
-        {session?.user && (
-          <Button
-            className="flex items-center gap-3 rounded-lg px-3 py-2"
-            onClick={() => signOut()}
-            variant={"outline"}
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        )}
+        {session?.user && <Logout />}
       </nav>
     </div>
   );

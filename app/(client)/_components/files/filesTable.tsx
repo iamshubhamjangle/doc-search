@@ -109,7 +109,8 @@ const FilesTable = async () => {
       <CardFooter>
         <div className="text-xs text-muted-foreground">
           {/* Showing <strong>1-10</strong> of <strong>32</strong> products */}
-          Showing <strong>10</strong> of <strong>10</strong> files
+          Showing <strong>{files.length}</strong> of{" "}
+          <strong>{files.length}</strong> files
         </div>
       </CardFooter>
     </Card>
