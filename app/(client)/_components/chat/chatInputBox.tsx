@@ -1,4 +1,4 @@
-import { Button } from "@/app/(client)/_components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/app/(client)/_components/ui/textarea";
 
 const ChatInputBox = () => {

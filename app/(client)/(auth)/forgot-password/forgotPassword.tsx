@@ -4,7 +4,7 @@ import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { Button } from "@/app/(client)/_components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/app/(client)/_components/ui/input";
 import { Label } from "@/app/(client)/_components/ui/label";
 import { useRouter } from "next/navigation";

@@ -1,7 +1,7 @@
 import { MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/app/(client)/_components/ui/badge";
-import { Button } from "@/app/(client)/_components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -28,6 +28,7 @@ import {
 import { serverAuth } from "@/app/_lib/serverAuth";
 import prisma from "@/app/_lib/db";
 import { formatFileSize } from "@/app/_lib/utils";
+import FilesTableDropdownMenuItems from "@/app/(client)/_components/files/filesTableDropdownMenuItems";
 
 const FilesTable = async () => {
   const session = await serverAuth();
@@ -93,11 +94,7 @@ const FilesTable = async () => {
                           <span className="sr-only">Toggle menu</span>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
+                      <FilesTableDropdownMenuItems fileId={file.id} />
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
