@@ -1,7 +1,4 @@
-import { MoreHorizontal } from "lucide-react";
-
 import { Badge } from "@/app/(client)/_components/ui/badge";
-import { Button } from "@/app/(client)/_components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,13 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/(client)/_components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/app/(client)/_components/ui/dropdown-menu";
+
 import {
   Table,
   TableBody,
@@ -28,7 +19,7 @@ import {
 import { serverAuth } from "@/app/_lib/serverAuth";
 import prisma from "@/app/_lib/db";
 import { formatFileSize } from "@/app/_lib/utils";
-import FilesTableDropdownMenuItems from "@/app/(client)/_components/files/filesTableDropdownMenuItems";
+import FilesTableDropdownMenu from "@/app/(client)/_components/files/filesTableDropdownMenuItems";
 
 const FilesTable = async () => {
   const session = await serverAuth();
@@ -83,19 +74,7 @@ const FilesTable = async () => {
                     {file.createdAt.toLocaleString()}
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          aria-haspopup="true"
-                          size="icon"
-                          variant="ghost"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <FilesTableDropdownMenuItems fileId={file.id} />
-                    </DropdownMenu>
+                    <FilesTableDropdownMenu fileId={file.id} />
                   </TableCell>
                 </TableRow>
               );
