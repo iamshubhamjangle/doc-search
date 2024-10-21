@@ -8,8 +8,7 @@ const ChatBox = () => {
   const chats = [
     {
       type: "user",
-      message:
-        "Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.",
+      message: "What is common in most successful people in history",
     },
     {
       type: "bot",

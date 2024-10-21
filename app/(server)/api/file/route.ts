@@ -32,7 +32,6 @@ function generateUniqueFileName(originalName: string): string {
   const extension = originalName.split(".").pop();
   return `${originalName.split(".")[0]}-${timestamp}-${uniqueId}.${extension}`;
 }
-
 /**
  * Step 2: Processes PDF file and extracts text content
  */
@@ -48,8 +47,18 @@ async function processPdfFile(file: File): Promise<ProcessedDocument[]> {
       throw new Error("No content found in PDF");
     }
 
+    // Ensure each document has a page number in its metadata
+    const docsWithPages = docs.map((doc, index) => ({
+      ...doc,
+      pageContent: doc.pageContent.trim(),
+      metadata: {
+        ...doc.metadata,
+        page: doc.metadata?.loc?.pageNumber || -1,
+      },
+    }));
+
     console.log(`STEP 2: Successfully processed PDF with ${docs.length} pages`);
-    return docs;
+    return docsWithPages;
   } catch (error) {
     console.error("STEP 2: PDF processing error:", error);
     throw new Error(
@@ -75,19 +84,21 @@ async function splitDocuments(
 
     const splitDocs = await textSplitter.splitDocuments(docs);
 
-    // Add chunk numbers to metadata
-    const docsWithChunkNumbers = splitDocs.map((doc, index) => ({
-      ...doc,
-      metadata: {
-        ...doc.metadata,
-        chunk: index + 1,
-      },
-    }));
+    const docsWithMetadata = splitDocs.map((doc, index) => {
+      if (index === 0) console.log("doc", doc);
+      return {
+        ...doc,
+        metadata: {
+          ...doc.metadata,
+          chunk: index + 1,
+          page: doc.metadata.page || -1,
+          pageContent: doc.pageContent,
+        },
+      };
+    });
 
-    console.log(
-      `Step 3: File is Split into ${docsWithChunkNumbers.length} chunks`
-    );
-    return docsWithChunkNumbers;
+    console.log(`Step 3: File is Split into ${docsWithMetadata.length} chunks`);
+    return docsWithMetadata;
   } catch (error) {
     console.error("Step 3: Document splitting error:", error);
     throw new Error(
@@ -97,7 +108,6 @@ async function splitDocuments(
     );
   }
 }
-
 /**
  * Generates embeddings for document chunks
  */
@@ -165,6 +175,7 @@ async function storeVectorsInPinecone(
           pageNumber: chunks[i].metadata.page || 0,
           chunkNumber: chunks[i].metadata.chunk || i,
           userId,
+          pageContent: chunks[i].pageContent,
         },
       })
     );

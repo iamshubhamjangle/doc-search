@@ -44,10 +44,6 @@ async function initializePineconeRetriever(userId: string, fileIds?: string[]) {
     const retriever = vectorStore.asRetriever({
       searchType: "similarity",
       k: 5,
-      filter: {
-        userId,
-        ...(fileIds && fileIds.length > 0 && { fileId: { $in: fileIds } }),
-      },
     });
 
     console.log("Initialized Pinecone retriever successfully");
@@ -128,18 +124,23 @@ export async function POST(req: Request) {
 
     // 1. Initialize Pinecone retriever
     const retriever = await initializePineconeRetriever(userId, fileIds);
+    console.log("retriever", retriever);
 
     // 2. Generate response using ChatGPT and retriever
     const results = await generateResponse(query, retriever);
 
+    console.log("results", results);
     // 3. Extract relevant chunks from the results
-    const relevantChunks = results.sourceDocuments.map((doc: any) => ({
-      content: doc.pageContent,
-      metadata: {
-        pageNumber: doc.metadata.pageNumber,
-        fileName: doc.metadata.fileName,
-      },
-    }));
+    const relevantChunks = results.context?.map((doc: any, index: number) => {
+      if (index === 0) console.log("doc", doc);
+      return {
+        content: doc.pageContent,
+        metadata: {
+          pageNumber: doc.metadata.pageNumber,
+          fileName: doc.metadata.fileName,
+        },
+      };
+    });
 
     // 4. Prepare and return response
     const response: ChatResponse = {

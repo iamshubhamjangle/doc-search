@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Select,
   SelectContent,
@@ -5,24 +7,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/(client)/_components/ui/select";
-import { serverAuth } from "@/app/_lib/serverAuth";
-import prisma from "@/app/_lib/db";
 
-const FileSelection = async () => {
-  const session = await serverAuth();
+import useFileStore from "@/app/(client)/_store/fileStore";
 
-  const files = await prisma.file.findMany({
-    where: {
-      userId: session?.user.id,
-    },
-    select: {
-      id: true,
-      originalName: true,
-    },
-  });
+interface FileSelectionProps {
+  files: any[];
+}
+
+const FileSelection: React.FC<FileSelectionProps> = ({ files }) => {
+  const setFileIds = useFileStore((state) => state.setFileIds);
+
+  const handleFileChange = (value: string) => {
+    setFileIds([value]);
+  };
 
   return (
-    <Select>
+    <Select onValueChange={handleFileChange}>
       <SelectTrigger className="w-[300px] border-2 border-primary">
         <SelectValue placeholder="Select your file" />
       </SelectTrigger>

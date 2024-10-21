@@ -4,6 +4,7 @@ import { Button } from "@/app/(client)/_components/ui/button";
 import { Textarea } from "@/app/(client)/_components/ui/textarea";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import useFileStore from "@/app/(client)/_store/fileStore";
 
 // Types for the chat response
 interface ChatResponse {
@@ -18,14 +19,14 @@ interface ChatResponse {
 }
 
 interface ChatInputBoxProps {
-  fileIds?: string[];
   onResponse?: (response: ChatResponse) => void;
   onError?: (error: Error) => void;
 }
 
-const ChatInputBox = ({ fileIds, onResponse, onError }: ChatInputBoxProps) => {
+const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const fileIds = useFileStore((state) => state.fileIds);
 
   const handleSendMessage = async () => {
     if (!input || input.trim().length === 0) {
