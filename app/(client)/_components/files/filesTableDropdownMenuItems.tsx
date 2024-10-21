@@ -79,7 +79,6 @@ const FilesTableDropdownMenu: React.FC<FilesTableDropdownMenuProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setShowDialog(true)}
               className="text-red-600 focus:text-red-600"

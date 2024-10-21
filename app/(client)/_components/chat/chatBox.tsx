@@ -16,36 +16,6 @@ const ChatBox = () => {
       message:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente nemo ipsum dolore unde, cum vel obcaecati enim? Provident cupiditate earum eius velit quisquam nemo porro consequatur. Explicabo neque sunt ducimus consectetur error magnam doloremque illum eius sequi modi beatae consequatur, nulla aut in quasi voluptatibus. Pariatur modi porro culpa. Eos.",
     },
-    {
-      type: "user",
-      message:
-        "Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.",
-    },
-    {
-      type: "bot",
-      message:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente nemo ipsum dolore unde, cum vel obcaecati enim? Provident cupiditate earum eius velit quisquam nemo porro consequatur. Explicabo neque sunt ducimus consectetur error magnam doloremque illum eius sequi modi beatae consequatur, nulla aut in quasi voluptatibus. Pariatur modi porro culpa. Eos.",
-    },
-    {
-      type: "user",
-      message:
-        "Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.",
-    },
-    {
-      type: "bot",
-      message:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente nemo ipsum dolore unde, cum vel obcaecati enim? Provident cupiditate earum eius velit quisquam nemo porro consequatur. Explicabo neque sunt ducimus consectetur error magnam doloremque illum eius sequi modi beatae consequatur, nulla aut in quasi voluptatibus. Pariatur modi porro culpa. Eos.",
-    },
-    {
-      type: "user",
-      message:
-        "Introducing Our Dynamic Orders Dashboard for Seamless Management and Insightful Analysis.",
-    },
-    {
-      type: "bot",
-      message:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente nemo ipsum dolore unde, cum vel obcaecati enim? Provident cupiditate earum eius velit quisquam nemo porro consequatur. Explicabo neque sunt ducimus consectetur error magnam doloremque illum eius sequi modi beatae consequatur, nulla aut in quasi voluptatibus. Pariatur modi porro culpa. Eos.",
-    },
   ];
 
   return (

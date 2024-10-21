@@ -22,8 +22,6 @@ interface ProcessedDocument {
 // Configuration constants
 const CHUNK_SIZE = 1000;
 const CHUNK_OVERLAP = 200;
-// https://platform.openai.com/docs/guides/embeddings/embedding-models
-const OPENAI_MODEL = "text-embedding-3-small";
 
 /**
  * Generates a unique filename with timestamp
@@ -113,7 +111,7 @@ async function generateEmbeddings(
 
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY,
-      modelName: OPENAI_MODEL,
+      modelName: process.env.OPEN_AI_TEXT_EMBEDDING_MODEL,
     });
 
     const vectors = await embeddings.embedDocuments(
