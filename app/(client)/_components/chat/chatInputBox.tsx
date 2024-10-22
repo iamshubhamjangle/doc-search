@@ -27,9 +27,8 @@ interface ChatInputBoxProps {
 
 const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const fileIds = useFileStore((state) => state.fileIds);
-  const { addChat } = useChatStore();
+  const { addChat, isLoading, setIsLoading } = useChatStore();
 
   const handleSendMessage = async () => {
     if (!input || input.trim().length === 0) {

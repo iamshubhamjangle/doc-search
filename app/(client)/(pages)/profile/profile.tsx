@@ -30,11 +30,12 @@ import { Input } from "@/app/(client)/_components/ui/input";
 import { Button } from "@/app/(client)/_components/ui/button";
 import { Switch } from "@/app/(client)/_components/ui/switch";
 import { Label } from "@/app/(client)/_components/ui/label";
+import { Checkbox } from "@/app/(client)/_components/ui/checkbox";
+import MainContentWrapper from "@/app/(client)/_components/home/MainContentWrapper";
 
 // REACT_FORM_STEP_1 Imports
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "../../_components/ui/checkbox";
 import { format } from "date-fns";
 import { cn } from "@/app/_lib/utils";
 import axios from "axios";
@@ -85,172 +86,174 @@ const Profile: React.FC<ProfileProps> = ({ initialData }) => {
   }
 
   return (
-    <div className="container py-6 px-2 md:px-4">
-      <div className="flex justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Your Profile</h2>
-        <Button
-          type="submit"
-          size="lg"
-          loading={loading}
-          disabled={loading}
-          onClick={form.handleSubmit(onSubmit)}
-        >
-          Save
-        </Button>
-      </div>
-      <div className="grid w-full items-center gap-5 my-4">
-        <div>
-          <Label htmlFor="username">Username</Label>
-          <Input
-            type="text"
-            id="username"
-            value={initialData?.user?.name || "************"}
-            disabled
-          />
+    <MainContentWrapper>
+      <div>
+        <div className="flex justify-between">
+          <h2 className="text-3xl font-bold tracking-tight">Your Profile</h2>
+          <Button
+            type="submit"
+            size="lg"
+            loading={loading}
+            disabled={loading}
+            onClick={form.handleSubmit(onSubmit)}
+          >
+            Save
+          </Button>
         </div>
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            id="email"
-            value={initialData?.user?.email || "************"}
-            disabled
-          />
+        <div className="grid w-full items-center gap-5 my-4">
+          <div>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              type="text"
+              id="username"
+              value={initialData?.user?.name || "************"}
+              disabled
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              type="email"
+              id="email"
+              value={initialData?.user?.email || "************"}
+              disabled
+            />
+          </div>
         </div>
-      </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bio</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Tell us a little bit about yourself"
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bio</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your gender" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="birthDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date of birth</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
+                    <Textarea
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none"
+                      {...field}
                     />
-                  </PopoverContent>
-                </Popover>
-                <FormDescription>
-                  Your date of birth is used to calculate your age.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="privateProfile"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Private Account</FormLabel>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="birthDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date of birth</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormDescription>
-                    This will hide your account details and posts from people
-                    who you don&apos;t follow
+                    Your date of birth is used to calculate your age.
                   </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="emailMarketing"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>Receive Account updates on email</FormLabel>
-                  <FormDescription>
-                    This will enable all the emails related to
-                    order/payment/account send to your mailbox
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
-    </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="privateProfile"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Private Account</FormLabel>
+                    <FormDescription>
+                      This will hide your account details and posts from people
+                      who you don&apos;t follow
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="emailMarketing"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Receive Account updates on email</FormLabel>
+                    <FormDescription>
+                      This will enable all the emails related to
+                      order/payment/account send to your mailbox
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      </div>
+    </MainContentWrapper>
   );
 };
 

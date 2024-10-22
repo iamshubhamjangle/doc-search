@@ -82,19 +82,14 @@ const generateResponseFromResults = async (
 ) => {
   const llm = new ChatOpenAI({
     model: process.env.OPEN_AI_CHAT_MODEL,
-    temperature: 0.3,
+    temperature: 1,
   });
 
-  const customTemplate = `Use the following pieces of context to answer the question at the end.
-If you don't know the answer, just say that you don't know, don't try to make up an answer.
-Use three sentences maximum and keep the answer as concise as possible.
-If the provided context doesn't contain information relevant to the question, explicitly state that the information is not found in the provided documents.
+  const customTemplate = `Use the following Context to answer the question.
 
 Context: {context}
 
-Question: {question}
-
-Helpful Answer:`;
+Question: {question}`;
 
   const customRagPrompt = PromptTemplate.fromTemplate(customTemplate);
 
