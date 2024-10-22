@@ -7,9 +7,7 @@ interface MainContentWrapperProps {
 const MainContentWrapper: React.FC<MainContentWrapperProps> = ({
   children,
 }) => {
-  return (
-    <main className="max-h-[100vh] p-4 lg:p-6 overflow-y-auto">{children}</main>
-  );
+  return <main className="max-h-[100vh] p-4">{children}</main>;
 };
 
 export default MainContentWrapper;

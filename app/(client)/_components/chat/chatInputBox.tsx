@@ -37,6 +37,11 @@ const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
       return;
     }
 
+    if (!fileIds || fileIds.length === 0) {
+      toast.error("Please select a file");
+      return;
+    }
+
     setInput("");
     setIsLoading(true);
     addChat({
