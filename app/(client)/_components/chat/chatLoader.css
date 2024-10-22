@@ -1,54 +1,28 @@
 /* HTML: <div class="loader"></div> */
 .loader {
-  width: 50px;
-  height: 28px;
-  --_g: no-repeat radial-gradient(farthest-side, #000 94%, #0000);
-  background: var(--_g) 50% 0, var(--_g) 100% 0;
-  background-size: 10px 10px;
-  position: relative;
-  animation: l23-0 1.5s linear infinite;
-}
-.loader:before {
-  content: "";
-  position: absolute;
-  height: 10px;
+  width: 15px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: #000;
-  left: 0;
-  top: 0;
-  animation: l23-1 1.5s linear infinite,
-    l23-2 0.5s cubic-bezier(0, 200, 0.8, 200) infinite;
+  box-shadow: 0 0 0 0 #0004;
+  animation: l2 1.5s infinite linear;
+  position: relative;
 }
-@keyframes l23-0 {
-  0%,
-  31% {
-    background-position: 50% 0, 100% 0;
-  }
-  33% {
-    background-position: 50% 100%, 100% 0;
-  }
-  43%,
-  64% {
-    background-position: 50% 0, 100% 0;
-  }
-  66% {
-    background-position: 50% 0, 100% 100%;
-  }
-  79% {
-    background-position: 50% 0, 100% 0;
-  }
-  100% {
-    transform: translateX(calc(-100% / 3));
-  }
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 #0004;
+  animation: inherit;
+  animation-delay: -0.5s;
 }
-@keyframes l23-1 {
-  100% {
-    left: calc(100% + 7px);
-  }
+.loader:after {
+  animation-delay: -1s;
 }
-@keyframes l23-2 {
+@keyframes l2 {
   100% {
-    top: -0.1px;
+    box-shadow: 0 0 0 25px #0000;
   }
 }

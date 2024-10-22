@@ -38,15 +38,7 @@ const ChatBox = () => {
             </div>
           );
         })}
-        {isLoading && (
-          <Card className="shadow-none mr-16">
-            <CardHeader className="p-2">
-              <CardDescription className="text-start dark:text-white">
-                <div className="loader mt-3"></div>
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        )}
+        {isLoading && <div className="loader ml-10 mt-8"></div>}
       </div>
     </div>
   );
