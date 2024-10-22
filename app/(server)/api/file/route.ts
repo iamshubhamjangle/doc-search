@@ -85,7 +85,6 @@ async function splitDocuments(
     const splitDocs = await textSplitter.splitDocuments(docs);
 
     const docsWithMetadata = splitDocs.map((doc, index) => {
-      if (index === 0) console.log("doc", doc);
       return {
         ...doc,
         metadata: {
@@ -290,7 +289,7 @@ export async function POST(req: NextRequest) {
 
     console.log(`STEP 1: File processing started for '${uniqueFileName}'`);
 
-    // Create initial database entry with status processing
+    // Step 1: Create initial database entry with status processing
     const fileEntry = await prisma.file.create({
       data: {
         fileName: uniqueFileName,
@@ -391,7 +390,7 @@ export async function DELETE(req: NextRequest) {
     if (!file) return new NextResponse("Access Denied", { status: 401 });
 
     // Delete all vectors with matching fileId in metadata
-    await index.deleteMany(file.vectorIds);
+    if (file.vectorIds.length > 0) await index.deleteMany(file.vectorIds);
 
     await prisma.file.delete({
       where: {
