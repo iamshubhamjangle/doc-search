@@ -100,7 +100,7 @@ const FilesTableDropdownMenu: React.FC<FilesTableDropdownMenuProps> = ({
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <Button
               onClick={handleDelete}
-              disabled={isDeleting}
+              loading={isDeleting}
               className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             >
               {isDeleting ? "Deleting..." : "Delete"}
