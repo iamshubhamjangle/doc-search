@@ -34,6 +34,7 @@ const navList = [
     icon: Code,
     position: "bottom",
     href: "https://github.com/iamshubhamjangle?tab=repositories",
+    external: true,
   },
   {
     title: "Settings",
@@ -88,6 +89,7 @@ const NavItems = () => {
           if (item.position === "bottom") {
             return (
               <Link
+                target={item.external ? "_blank" : "_self"}
                 key={idx}
                 href={item.href}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"

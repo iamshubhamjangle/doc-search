@@ -12,13 +12,16 @@ interface Chat {
 
 // Define the structure of the store
 interface ChatStore {
+  isLoading: boolean;
   chats: Chat[];
   addChat: (chat: Chat) => void;
   clearChats: () => void;
+  setIsLoading: (value: boolean) => void;
 }
 
 // Create the Zustand store
 const useChatStore = create<ChatStore>((set) => ({
+  isLoading: false,
   chats: [
     // {
     //   type: "user",
@@ -50,6 +53,8 @@ const useChatStore = create<ChatStore>((set) => ({
 
   // Function to clear all chats
   clearChats: () => set({ chats: [] }),
+
+  setIsLoading: (value: boolean) => set({ isLoading: value }),
 }));
 
 export default useChatStore;

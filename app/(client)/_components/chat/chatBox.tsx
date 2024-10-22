@@ -6,9 +6,10 @@ import {
   CardHeader,
 } from "@/app/(client)/_components/ui/card";
 import useChatStore from "@/app/(client)/_store/chatStore";
+import "./chatLoader.css";
 
 const ChatBox = () => {
-  const { chats } = useChatStore();
+  const { chats, isLoading } = useChatStore();
 
   return (
     <div className="overflow-y-auto h-full">
@@ -37,6 +38,7 @@ const ChatBox = () => {
             </div>
           );
         })}
+        {isLoading && <div className="loader ml-10 mt-8"></div>}
       </div>
     </div>
   );
