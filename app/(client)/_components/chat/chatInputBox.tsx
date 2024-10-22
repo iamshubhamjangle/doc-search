@@ -5,6 +5,7 @@ import { Textarea } from "@/app/(client)/_components/ui/textarea";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import useFileStore from "@/app/(client)/_store/fileStore";
+import useChatStore from "@/app/(client)/_store/chatStore";
 
 // Types for the chat response
 interface ChatResponse {
@@ -12,8 +13,9 @@ interface ChatResponse {
   relevantChunks?: {
     content: string;
     metadata: {
-      pageNumber: number;
+      fileId: string;
       fileName: string;
+      pageNumber: number;
     };
   }[];
 }
@@ -27,6 +29,7 @@ const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const fileIds = useFileStore((state) => state.fileIds);
+  const { addChat } = useChatStore();
 
   const handleSendMessage = async () => {
     if (!input || input.trim().length === 0) {
@@ -34,8 +37,13 @@ const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
       return;
     }
 
+    setInput("");
     setIsLoading(true);
-    const loadingToast = toast.loading("Processing your question...");
+    addChat({
+      type: "user",
+      message: input,
+      source: null,
+    });
 
     try {
       const response = await fetch("/api/chat", {
@@ -56,15 +64,25 @@ const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
 
       const data: ChatResponse = await response.json();
 
-      toast.success("Response received", { id: loadingToast });
-      // onResponse?.(data);
-      console.log("data", data);
-
-      setInput("");
+      addChat({
+        type: "bot",
+        message: data.answer,
+        source:
+          data.relevantChunks?.map((chunk) => ({
+            fileId: chunk.metadata.fileId,
+            pageNumber: chunk.metadata.pageNumber,
+          })) || null,
+      });
     } catch (error) {
+      addChat({
+        type: "bot",
+        message:
+          "Something went wrong on our side, while processing your request.",
+        source: null,
+      });
+      setInput(input);
       const errorMessage =
         error instanceof Error ? error.message : "Something went wrong";
-      toast.error(errorMessage, { id: loadingToast });
       onError?.(error instanceof Error ? error : new Error(errorMessage));
     } finally {
       setIsLoading(false);

@@ -66,7 +66,7 @@ async function generateResponse(query: string, retriever: any): Promise<any> {
     const llm = new ChatOpenAI({
       modelName: process.env.OPEN_AI_CHAT_MODEL,
       openAIApiKey: process.env.OPENAI_API_KEY,
-      temperature: 0.7,
+      temperature: 0,
     });
 
     const prompt = ChatPromptTemplate.fromMessages([
@@ -75,8 +75,8 @@ async function generateResponse(query: string, retriever: any): Promise<any> {
         `You are an assistant for question-answering tasks. 
         Use the following pieces of retrieved context to answer the question. 
         If you don't know the answer, say that you don't know. 
-        Use three sentences maximum and keep the answer concise.
-        Always include the source page numbers in your response. Content: {context}`,
+        Keep the answer concise.
+        Content: {context}`,
       ],
       ["human", "{input}"],
     ]);
@@ -109,9 +109,9 @@ async function generateResponse(query: string, retriever: any): Promise<any> {
 
 function extractChunkInfoFromResponse(results: any) {
   return results.context?.map((doc: any, index: number) => {
-    if (index === 0) console.log("doc", doc);
     return {
       metadata: {
+        fileId: doc.metadata.fileId,
         fileName: doc.metadata.fileName,
         pageNumber: doc.metadata.pageNumber,
         pageContent: doc.metadata.pageContent,
@@ -146,7 +146,7 @@ export async function POST(req: Request) {
     // 3. Extract relevant chunks from the results
     const relevantChunks = extractChunkInfoFromResponse(results);
 
-    // 4. Prepare and return response
+    // 3. Prepare and return response
     const response: ChatResponse = {
       answer: results.answer,
       relevantChunks,

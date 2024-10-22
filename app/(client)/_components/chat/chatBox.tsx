@@ -1,21 +1,14 @@
+"use client";
+
 import {
   Card,
   CardDescription,
   CardHeader,
 } from "@/app/(client)/_components/ui/card";
+import useChatStore from "@/app/(client)/_store/chatStore";
 
 const ChatBox = () => {
-  const chats = [
-    {
-      type: "user",
-      message: "What is common in most successful people in history",
-    },
-    {
-      type: "bot",
-      message:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente nemo ipsum dolore unde, cum vel obcaecati enim? Provident cupiditate earum eius velit quisquam nemo porro consequatur. Explicabo neque sunt ducimus consectetur error magnam doloremque illum eius sequi modi beatae consequatur, nulla aut in quasi voluptatibus. Pariatur modi porro culpa. Eos.",
-    },
-  ];
+  const { chats } = useChatStore();
 
   return (
     <div className="row-start-2 row-end-3 overflow-y-auto flex flex-col gap-2">
