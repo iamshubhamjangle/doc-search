@@ -7,7 +7,7 @@ import ChatHeader from "@/app/(client)/_components/chat/header";
 export default function Home() {
   return (
     <MainContentWrapper>
-      <div className="flex flex-col gap-4 lg:gap-6">
+      <div className="grid grid-rows-[auto,1fr,auto] gap-4 lg:gap-6 h-full">
         <ChatHeader />
         <ChatBox />
         <ChatInputBox />

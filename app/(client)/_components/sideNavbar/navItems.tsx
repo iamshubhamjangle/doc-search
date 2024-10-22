@@ -53,7 +53,6 @@ const NavItems = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
   const router = useRouter();
-  console.log("session", session);
 
   return (
     <div className="flex flex-col justify-between h-full m-0 md:m-2">

@@ -116,7 +116,7 @@ export async function POST(req: Request) {
     // 2. Pass the result to openAI for a curated response.
     const answer = await generateResponseFromResults(topMatchingResults, query);
 
-    // 4. Prepare and return response
+    // 3. Prepare and return response
     const response: ChatResponse = {
       answer,
       source: topMatchingResults.map((item) => ({

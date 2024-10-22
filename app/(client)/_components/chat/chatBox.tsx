@@ -1,48 +1,43 @@
+"use client";
+
 import {
   Card,
   CardDescription,
   CardHeader,
 } from "@/app/(client)/_components/ui/card";
+import useChatStore from "@/app/(client)/_store/chatStore";
 
 const ChatBox = () => {
-  const chats = [
-    {
-      type: "user",
-      message: "What is common in most successful people in history",
-    },
-    {
-      type: "bot",
-      message:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente nemo ipsum dolore unde, cum vel obcaecati enim? Provident cupiditate earum eius velit quisquam nemo porro consequatur. Explicabo neque sunt ducimus consectetur error magnam doloremque illum eius sequi modi beatae consequatur, nulla aut in quasi voluptatibus. Pariatur modi porro culpa. Eos.",
-    },
-  ];
+  const { chats } = useChatStore();
 
   return (
-    <div className="row-start-2 row-end-3 overflow-y-auto flex flex-col gap-2">
-      {chats.map((chat, index) => {
-        return (
-          <div key={index}>
-            {chat.type === "user" && (
-              <Card className="sm:col-span-2 shadow-none ml-10 mr-2 bg-secondary ">
-                <CardHeader className="p-3">
-                  <CardDescription className="max-w-lg">
-                    {chat.message}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            )}
-            {chat.type === "bot" && (
-              <Card className="sm:col-span-2 shadow-none mr-10">
-                <CardHeader className="p-3">
-                  <CardDescription className="max-w-lg">
-                    {chat.message}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            )}
-          </div>
-        );
-      })}
+    <div className="overflow-y-auto h-full">
+      <div className="flex flex-col gap-3">
+        {chats.map((chat, index) => {
+          return (
+            <div key={index}>
+              {chat.type === "user" && (
+                <Card className="shadow-none ml-16 mr-2 bg-emerald-100 dark:bg-emerald-900">
+                  <CardHeader className="p-3">
+                    <CardDescription className="text-end dark:text-white">
+                      {chat.message}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              )}
+              {chat.type === "bot" && (
+                <Card className="shadow-none mr-16">
+                  <CardHeader className="p-3">
+                    <CardDescription className="text-start dark:text-white">
+                      {chat.message}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
