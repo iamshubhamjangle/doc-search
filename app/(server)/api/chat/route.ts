@@ -21,9 +21,21 @@ interface ChatResponse {
     fileId: string;
     pageNumber: Number;
   }[];
+  debug?: {
+    prompt: string;
+    context: string;
+    rawResults: any;
+  };
 }
 
-// 1. Generate embedding & Search Vector Store
+// Debug helper function
+const debugLog = (message: string, data: any) => {
+  console.log("\n=== DEBUG ===");
+  console.log(message);
+  console.log(JSON.stringify(data, null, 2));
+  console.log("============\n");
+};
+
 async function getTopKResultsFromPinecone(
   userId: string,
   fileIds: string[],
@@ -44,30 +56,41 @@ async function getTopKResultsFromPinecone(
       userId,
       fileId: fileIds[0],
     },
-    k: 2,
+    k: 5,
     searchType: "similarity",
   });
 
   const pineconeResult = await retriever.invoke(query);
 
+  // Debug log for Pinecone results
+  // debugLog("Pinecone Search Results:", {
+  //   query,
+  //   resultCount: pineconeResult.length,
+  //   results: pineconeResult.map((doc) => ({
+  //     content: doc.pageContent.substring(0, 100) + "...",
+  //     metadata: doc.metadata,
+  //     score: doc.metadata.score,
+  //   })),
+  // });
+
   return pineconeResult;
 }
 
-// 2 Pass the result to openAI for a curated response.
 const generateResponseFromResults = async (
   context: DocumentInterface<Record<string, any>>[],
   query: string
 ) => {
   const llm = new ChatOpenAI({
     model: process.env.OPEN_AI_CHAT_MODEL,
-    temperature: 0,
+    temperature: 0.3,
   });
 
   const customTemplate = `Use the following pieces of context to answer the question at the end.
 If you don't know the answer, just say that you don't know, don't try to make up an answer.
 Use three sentences maximum and keep the answer as concise as possible.
+If the provided context doesn't contain information relevant to the question, explicitly state that the information is not found in the provided documents.
 
-{context}
+Context: {context}
 
 Question: {question}
 
@@ -81,15 +104,33 @@ Helpful Answer:`;
     outputParser: new StringOutputParser(),
   });
 
+  // Generate the actual prompt that will be sent to OpenAI
+  const promptValue = await customRagPrompt.format({
+    context: context.map((doc) => doc?.metadata?.pageContent).join("\n\n"),
+    question: query,
+  });
+
+  // Debug log for prompt and context
+  debugLog("OpenAI Prompt Details:", {
+    fullPrompt: promptValue,
+    contextLength: context.length,
+    query,
+  });
+
   const result = await customRagChain.invoke({
     question: query,
     context,
   });
 
-  return result;
+  return {
+    answer: result,
+    debugInfo: {
+      prompt: promptValue,
+      context: context.map((doc) => doc.pageContent).join("\n\n"),
+    },
+  };
 };
 
-// Main route handler
 export async function POST(req: Request) {
   try {
     const session = await serverAuth();
@@ -113,8 +154,11 @@ export async function POST(req: Request) {
       query
     );
 
-    // 2. Pass the result to openAI for a curated response.
-    const answer = await generateResponseFromResults(topMatchingResults, query);
+    // 2. Pass the result to openAI for a curated response
+    const { answer, debugInfo } = await generateResponseFromResults(
+      topMatchingResults,
+      query
+    );
 
     // 3. Prepare and return response
     const response: ChatResponse = {
@@ -123,7 +167,21 @@ export async function POST(req: Request) {
         fileId: item.metadata.fileId,
         pageNumber: item.metadata.pageNumber,
       })),
+      debug: {
+        prompt: debugInfo.prompt,
+        context: debugInfo.context,
+        rawResults: topMatchingResults.map((doc) => ({
+          content: doc.pageContent,
+          metadata: doc.metadata,
+        })),
+      },
     };
+
+    // Final debug log
+    debugLog("Final Response:", {
+      answer,
+      sourceCount: response.source?.length,
+    });
 
     return NextResponse.json(response);
   } catch (error) {
