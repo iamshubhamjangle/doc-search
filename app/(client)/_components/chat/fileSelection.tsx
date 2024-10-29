@@ -29,7 +29,9 @@ const FileSelection: React.FC<FileSelectionProps> = ({ files }) => {
       <SelectContent>
         {files.map((file) => (
           <SelectItem key={file.id} value={file.id}>
-            {file.originalName}
+            <span className="block w-[250px] overflow-hidden whitespace-nowrap text-ellipsis">
+              {file.originalName}
+            </span>
           </SelectItem>
         ))}
       </SelectContent>

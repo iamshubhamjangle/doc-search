@@ -7,6 +7,7 @@ import {
 } from "@/app/(client)/_components/ui/card";
 import useChatStore from "@/app/(client)/_store/chatStore";
 import "./chatLoader.css";
+import Markdown from "react-markdown";
 
 const ChatBox = () => {
   const { chats, isLoading } = useChatStore();
@@ -21,7 +22,7 @@ const ChatBox = () => {
                 <Card className="shadow-none ml-16 mr-2 bg-emerald-100 dark:bg-emerald-900">
                   <CardHeader className="p-3">
                     <CardDescription className="text-end dark:text-white">
-                      {chat.message}
+                      <Markdown>{chat.message}</Markdown>
                     </CardDescription>
                   </CardHeader>
                 </Card>
@@ -30,7 +31,7 @@ const ChatBox = () => {
                 <Card className="shadow-none mr-16">
                   <CardHeader className="p-3">
                     <CardDescription className="text-start dark:text-white">
-                      {chat.message}
+                      <Markdown>{chat.message}</Markdown>
                     </CardDescription>
                   </CardHeader>
                 </Card>
