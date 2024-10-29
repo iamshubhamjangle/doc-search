@@ -8,6 +8,7 @@ import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { ChatOpenAI } from "@langchain/openai";
 import { DocumentInterface } from "@langchain/core/documents";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import prisma from "@/app/_lib/db";
 
 // Types
 interface ChatRequest {
@@ -149,6 +150,25 @@ export async function POST(req: Request) {
       );
     }
 
+    const userProfile = await prisma.userProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!userProfile) {
+      return NextResponse.json(
+        { message: "User profile not found" },
+        { status: 404 }
+      );
+    }
+
+    // Step 2: Check file upload limit
+    if (userProfile.queryLimit <= 0) {
+      return NextResponse.json(
+        { message: "You have exhausted your query limit" },
+        { status: 403 }
+      );
+    }
+
     // 1. Generate embedding & Search Vector Store
     const topMatchingResults = await getTopKResultsFromPinecone(
       userId,
@@ -183,6 +203,12 @@ export async function POST(req: Request) {
     debugLog("Final Response:", {
       answer,
       sourceCount: response.source?.length,
+    });
+
+    // Step 8: Deduct the limit
+    await prisma.userProfile.update({
+      where: { userId },
+      data: { queryLimit: userProfile.queryLimit - 1 },
     });
 
     return NextResponse.json(response);

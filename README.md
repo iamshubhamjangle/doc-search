@@ -41,7 +41,11 @@ npx prisma migrate dev --name "migration-name"
 
 ## Todo:
 
-- Add upload size limit defaults to 1MB.
-- Add number of file uploads defaults to 1.
-- Add number of queries executed defaults to 1.
-- If query is done after limit exceeded, respond with chat message about langchain and mention limit exceeded.
+- Convert all NextResponse to
+
+```
+return NextResponse.json(
+    { message: "You have exhausted your file upload limit" },
+    { status: 403 }
+);
+```

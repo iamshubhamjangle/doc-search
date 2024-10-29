@@ -62,8 +62,8 @@ const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get response");
+        const error = await response.json();
+        throw new Error(error.message || "Failed to get response");
       }
 
       const data: ChatResponse = await response.json();
@@ -77,10 +77,11 @@ const ChatInputBox = ({ onResponse, onError }: ChatInputBoxProps) => {
             pageNumber: chunk.metadata.pageNumber,
           })) || null,
       });
-    } catch (error) {
+    } catch (error: any) {
       addChat({
         type: "bot",
         message:
+          error.message ||
           "Something went wrong on our side, while processing your request.",
         source: null,
       });

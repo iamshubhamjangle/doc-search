@@ -284,6 +284,33 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Only PDF files are supported", { status: 400 });
     }
 
+    const userProfile = await prisma.userProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!userProfile) {
+      return NextResponse.json(
+        { message: "User profile not found" },
+        { status: 404 }
+      );
+    }
+
+    // Step 2: Check file upload limit
+    if (userProfile.fileUploadLimit <= 0) {
+      return NextResponse.json(
+        { message: "You have exhausted your file upload limit" },
+        { status: 403 }
+      );
+    }
+
+    // Check if file size exceeds 1 MB (1 MB = 1024 * 1024 bytes)
+    const maxFileSize = 1 * 1024 * 1024; // 1 MB
+    if (file.size > maxFileSize) {
+      return new NextResponse("File size must not exceed 1 MB", {
+        status: 400,
+      });
+    }
+
     // Generate unique filename
     const uniqueFileName = generateUniqueFileName(file.name);
 
@@ -335,6 +362,12 @@ export async function POST(req: NextRequest) {
       },
     });
     console.log(`Step 7: File processing completed for: ${uniqueFileName}`);
+
+    // Step 8: Deduct the limit
+    await prisma.userProfile.update({
+      where: { userId },
+      data: { fileUploadLimit: userProfile.fileUploadLimit - 1 },
+    });
 
     // Step 8: Prepare response
     const response = {

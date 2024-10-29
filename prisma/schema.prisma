@@ -53,12 +53,14 @@ model Account {
 
 // Required only for setting page for form tutorial
 model UserProfile {
-  id             String    @id @default(cuid())
-  bio            String?
-  gender         String? // You can use an enum for gender (Male, Female)
-  birthDate      DateTime?
-  privateProfile Boolean? // You can use an enum for profile visibility (Public, Private)
-  emailMarketing Boolean?
+  id              String    @id @default(cuid())
+  bio             String?
+  gender          String? // You can use an enum for gender (Male, Female)
+  birthDate       DateTime?
+  privateProfile  Boolean? // You can use an enum for profile visibility (Public, Private)
+  emailMarketing  Boolean?
+  fileUploadLimit Int       @default(2)
+  queryLimit      Int       @default(4)
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

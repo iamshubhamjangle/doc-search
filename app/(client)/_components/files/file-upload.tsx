@@ -65,18 +65,20 @@ export function FileUpload() {
         body: formData,
       });
 
-      const data: FileUploadResponse = await response.json();
-
-      if (response.ok && data.success) {
-        toast.success(
-          `File processed successfully. Found ${data.pageCount} pages.`
-        );
-        console.log("Upload response:", data);
-        router.refresh();
+      if (response.ok) {
+        const data: FileUploadResponse = await response.json();
+        if (data.success) {
+          toast.success(
+            `File processed successfully. Found ${data.pageCount} pages.`
+          );
+          console.log("Upload response:", data);
+          router.refresh();
+        }
       } else {
-        const errorText = await response.text();
-        toast.error(`Upload failed: ${errorText}`);
-        console.error("Upload failed:", errorText);
+        console.log("response", response);
+        // const errorText = await response.text();
+        // toast.error(`Upload failed: ${errorText}`);
+        // console.error("Upload failed:", errorText);
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -105,6 +107,7 @@ export function FileUpload() {
             accept="application/pdf"
             onChange={handleFileChange}
           />
+          <p className="text-muted-foreground">Maximum file size is 1MB</p>
         </div>
       </CardContent>
       <CardFooter>

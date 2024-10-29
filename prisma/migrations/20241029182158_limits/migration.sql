@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "UserProfile" ADD COLUMN     "fileUploadLimit" INTEGER NOT NULL DEFAULT 2,
+ADD COLUMN     "queryLimit" INTEGER NOT NULL DEFAULT 4;
