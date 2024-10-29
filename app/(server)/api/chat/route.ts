@@ -82,14 +82,16 @@ const generateResponseFromResults = async (
 ) => {
   const llm = new ChatOpenAI({
     model: process.env.OPEN_AI_CHAT_MODEL,
-    temperature: 1,
+    temperature: 0.7,
   });
 
-  const customTemplate = `Use the following Context to answer the question.
-
-Context: {context}
-
-Question: {question}`;
+  const customTemplate = `
+  Use the following Context to answer the question. If there is no relevant information in the context, respond with "I don't have the information to answer that."
+  
+  Context: {context}
+  
+  Question: {question}
+  `;
 
   const customRagPrompt = PromptTemplate.fromTemplate(customTemplate);
 
@@ -101,7 +103,12 @@ Question: {question}`;
 
   // Generate the actual prompt that will be sent to OpenAI
   const promptValue = await customRagPrompt.format({
-    context: context.map((doc) => doc?.metadata?.pageContent).join("\n\n"),
+    context: context
+      .map((doc) => {
+        console.log("doc", doc);
+        return doc?.pageContent;
+      })
+      .join("\n\n"),
     question: query,
   });
 

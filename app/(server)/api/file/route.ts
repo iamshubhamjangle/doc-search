@@ -174,7 +174,7 @@ async function storeVectorsInPinecone(
           pageNumber: chunks[i].metadata.page || 0,
           chunkNumber: chunks[i].metadata.chunk || i,
           userId,
-          pageContent: chunks[i].pageContent,
+          text: chunks[i].pageContent,
         },
       })
     );
