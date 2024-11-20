@@ -306,9 +306,10 @@ export async function POST(req: NextRequest) {
     // Check if file size exceeds 1 MB (1 MB = 1024 * 1024 bytes)
     const maxFileSize = 1 * 1024 * 1024; // 1 MB
     if (file.size > maxFileSize) {
-      return new NextResponse("File size must not exceed 1 MB", {
-        status: 400,
-      });
+      return NextResponse.json(
+        { message: "File size must not exceed 1 MB" },
+        { status: 403 }
+      );
     }
 
     // Generate unique filename

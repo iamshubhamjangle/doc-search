@@ -71,18 +71,15 @@ export function FileUpload() {
           toast.success(
             `File processed successfully. Found ${data.pageCount} pages.`
           );
-          console.log("Upload response:", data);
           router.refresh();
         }
       } else {
-        console.log("response", response);
-        // const errorText = await response.text();
-        // toast.error(`Upload failed: ${errorText}`);
-        // console.error("Upload failed:", errorText);
+        const parsedResponse = await response.json();
+        toast.error(`Upload failed! ${parsedResponse?.message}`);
       }
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Error uploading the file. Please try again.");
+      console.log("error", error);
+      toast.error("Error uploading the file. Please contact support.");
     } finally {
       setIsLoading(false);
       setFile(null);
