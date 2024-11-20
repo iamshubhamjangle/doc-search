@@ -59,9 +59,21 @@ export const authOptions: NextAuthOptions = {
     // Extra properties mentioned here should be present in @/app/_types/next-auth.d.ts
     // jwt callback is called first, then session callback is called
     // Anything set in jwt callback is available in session callback
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, account }) => {
       if (user) {
         // token.identifier = user.identifier;
+      }
+      if (account?.provider === "google" && user) {
+        // Create UserProfile if it doesn't exist
+        await prisma.userProfile.upsert({
+          where: { userId: user.id },
+          update: {},
+          create: {
+            userId: user.id,
+            fileUploadLimit: 2,
+            queryLimit: 4,
+          },
+        });
       }
       return token;
     },
@@ -71,6 +83,13 @@ export const authOptions: NextAuthOptions = {
         // session.user.identifier = token.identifier;
       }
       return session;
+    },
+    redirect: async ({ url, baseUrl }) => {
+      // Allow relative redirects
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+
+      // Ensure redirects are to your domain
+      return url.startsWith(baseUrl) ? url : baseUrl;
     },
   },
   session: {
