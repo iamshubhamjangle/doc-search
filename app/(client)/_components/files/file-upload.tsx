@@ -107,7 +107,9 @@ export function FileUpload() {
             accept="application/pdf"
             onChange={handleFileChange}
           />
-          <p className="text-muted-foreground">Maximum file size is 1MB</p>
+          <p className="text-muted-foreground">
+            Maximum file size is 1MB. Supported file type: PDF
+          </p>
         </div>
       </CardContent>
       <CardFooter>
