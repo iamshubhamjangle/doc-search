@@ -84,13 +84,13 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    redirect: async ({ url, baseUrl }) => {
-      // Allow relative redirects
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
+    // redirect: async ({ url, baseUrl }) => {
+    //   // Allow relative redirects
+    //   if (url.startsWith("/")) return `${baseUrl}${url}`;
 
-      // Ensure redirects are to your domain
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
+    //   // Ensure redirects are to your domain
+    //   return url.startsWith(baseUrl) ? url : baseUrl;
+    // },
   },
   session: {
     strategy: "jwt",

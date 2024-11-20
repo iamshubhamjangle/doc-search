@@ -5,7 +5,7 @@ import { serverAuth } from "@/app/_lib/serverAuth";
 const RegisterPage = async ({ searchParams }: any) => {
   const session = await serverAuth();
 
-  if (session) redirect(searchParams?.callbackUrl || "/");
+  if (session) redirect("/");
 
   return <Register searchParams={searchParams} />;
 };

@@ -6,7 +6,7 @@ import { serverAuth } from "@/app/_lib/serverAuth";
 const LoginPage = async ({ searchParams }: any) => {
   const session = await serverAuth();
 
-  if (session) redirect(searchParams?.callbackUrl || "/");
+  if (session) redirect("/");
 
   return <LoginComponent searchParams={searchParams} />;
 };
