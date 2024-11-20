@@ -41,11 +41,5 @@ npx prisma migrate dev --name "migration-name"
 
 ## Todo:
 
-- Convert all NextResponse to
-
-```
-return NextResponse.json(
-    { message: "You have exhausted your file upload limit" },
-    { status: 403 }
-);
-```
+- If there error during file processing, file status must be updated to "error"
+- Convert all NextResponse to return NextResponse.json();
