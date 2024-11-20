@@ -7,19 +7,21 @@ import { serverAuth } from "@/app/_lib/serverAuth";
 const ProfilePage = async () => {
   const session = await serverAuth();
 
-  const userProfile = await prisma.userProfile.findFirst({
-    where: {
-      userId: session?.user.id,
-    },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
+  const userProfile = session?.user?.id
+    ? await prisma.userProfile.findFirst({
+        where: {
+          userId: session?.user.id,
         },
-      },
-    },
-  });
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      })
+    : {};
 
   return <Profile initialData={userProfile} />;
 };

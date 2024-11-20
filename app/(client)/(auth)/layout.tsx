@@ -3,8 +3,8 @@ import Link from "next/link";
 import { LogoIcon } from "@/app/(client)/_components/Icons/logoIcon";
 
 export const metadata: Metadata = {
-  title: "Ripple/Auth",
-  description: "A new world of Rippling!",
+  title: "Doc Search Auth",
+  description: "DocSearch: Unlock Insights, Instantly!",
 };
 
 export default function RootLayout({

@@ -11,7 +11,7 @@ const LoginModal: React.FC<LoginModalProps> = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
 
-  // Don't render modal on /login page
+  // Don't render modal on these page
   if (
     pathname === "/login" ||
     pathname === "/register" ||
