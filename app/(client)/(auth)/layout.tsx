@@ -17,17 +17,17 @@ export default function RootLayout({
       <div className="h-full w-full grid place-items-center">
         <div className="flex h-full w-full">
           <div className="hidden lg:flex flex-col justify-between w-1/2">
-            <div className="flex flex-col h-full p-10 justify-between bg-zinc-900 bg-[url('/background.jpg')] bg-cover bg-center">
+            <div className="flex flex-col h-full p-10 justify-between bg-zinc-900 bg-[url('/background2.jpg')] bg-cover bg-center">
               <Link href="/">
-                <div className="flex items-center">
+                <div className="flex items-center text-primary fill-primary">
                   <LogoIcon className="h-8 w-8 mr-2" />
-                  <span className="text-white font-black">DocSearch</span>
+                  <span className="font-black">DocSearch</span>
                 </div>
               </Link>
-              <blockquote className="text-white font-semibold">
-                &ldquo;Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Quam, neque nesciunt molestias hic amet pariatur ab eius rerum
-                eveniet placeat at rem commodi nemo.&rdquo;
+              <blockquote className="text-primary font-semibold">
+                &ldquo;Discover, connect, and unlock the full potential of your
+                data in seconds with DocSearch&apos;s revolutionary AI-driven
+                document search.&rdquo;
               </blockquote>
             </div>
           </div>

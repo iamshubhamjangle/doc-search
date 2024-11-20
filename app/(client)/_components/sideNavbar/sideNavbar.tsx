@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Package2 } from "lucide-react";
 import NavItems from "./navItems";
+import { LogoIcon } from "../Icons/logoIcon";
 
 const SideNavBar = () => {
   return (
@@ -11,7 +11,7 @@ const SideNavBar = () => {
             href="/"
             className="flex items-center gap-2 font-semibold text-primary"
           >
-            <Package2 className="h-6 w-6" />
+            <LogoIcon className="h-8 w-8 fill-primary" />
             <span className="">SearchDoc</span>
           </Link>
         </div>
