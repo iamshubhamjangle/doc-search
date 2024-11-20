@@ -32,7 +32,7 @@ const NavItems = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
-  console.log("session", session);
+  // console.log("session", session);
 
   return (
     <div className="flex flex-col justify-between h-full m-0 md:m-2">

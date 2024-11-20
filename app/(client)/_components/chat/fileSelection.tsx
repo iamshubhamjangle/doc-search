@@ -24,16 +24,28 @@ const FileSelection: React.FC<FileSelectionProps> = ({ files }) => {
   return (
     <Select onValueChange={handleFileChange}>
       <SelectTrigger className="w-[300px] border-2 border-primary">
-        <SelectValue placeholder="Select your file" />
+        <SelectValue
+          placeholder={
+            files.length == 0 ? "Please upload some files" : "Select your file"
+          }
+        />
       </SelectTrigger>
       <SelectContent>
-        {files.map((file) => (
-          <SelectItem key={file.id} value={file.id}>
+        {files.length > 0 ? (
+          files.map((file) => (
+            <SelectItem key={file.id} value={file.id}>
+              <span className="block w-[250px] overflow-hidden whitespace-nowrap text-ellipsis">
+                {file.originalName}
+              </span>
+            </SelectItem>
+          ))
+        ) : (
+          <SelectItem key={"-1"} value={""} disabled>
             <span className="block w-[250px] overflow-hidden whitespace-nowrap text-ellipsis">
-              {file.originalName}
+              No files found
             </span>
           </SelectItem>
-        ))}
+        )}
       </SelectContent>
     </Select>
   );

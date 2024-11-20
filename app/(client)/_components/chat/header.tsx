@@ -7,15 +7,17 @@ import prisma from "@/app/_lib/db";
 const ChatHeader = async () => {
   const session = await serverAuth();
 
-  const files = await prisma.file.findMany({
-    where: {
-      userId: session?.user.id,
-    },
-    select: {
-      id: true,
-      originalName: true,
-    },
-  });
+  const files = session?.user?.id
+    ? await prisma.file.findMany({
+        where: {
+          userId: session?.user.id,
+        },
+        select: {
+          id: true,
+          originalName: true,
+        },
+      })
+    : [];
 
   return (
     <div className="flex items-center justify-between">

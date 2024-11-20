@@ -6,7 +6,7 @@ export default function SignIn() {
   const { data: session } = useSession();
 
   if (session?.user) {
-    console.log("session", session);
+    // console.log("session", session);
     return <button onClick={() => signOut()}>Sign Out</button>;
   }
 

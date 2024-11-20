@@ -24,19 +24,21 @@ import FilesTableDropdownMenu from "@/app/(client)/_components/files/filesTableD
 const FilesTable = async () => {
   const session = await serverAuth();
 
-  const files = await prisma.file.findMany({
-    where: {
-      userId: session?.user.id,
-    },
-    select: {
-      id: true,
-      originalName: true,
-      status: true,
-      createdAt: true,
-      processingError: true,
-      fileSize: true,
-    },
-  });
+  const files = session?.user?.id
+    ? await prisma.file.findMany({
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          id: true,
+          originalName: true,
+          status: true,
+          createdAt: true,
+          processingError: true,
+          fileSize: true,
+        },
+      })
+    : [];
 
   return (
     <Card className="my-4">
