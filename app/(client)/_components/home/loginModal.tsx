@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 
 interface LoginModalProps {}
 
+// If user is not logged in, shows a login popup so he could login before procedding to protected routes.
 const LoginModal: React.FC<LoginModalProps> = () => {
   const { data: session } = useSession();
   const pathname = usePathname();

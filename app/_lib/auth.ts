@@ -56,15 +56,17 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
   callbacks: {
-    // Extra properties mentioned here should be present in @/app/_types/next-auth.d.ts
-    // jwt callback is called first, then session callback is called
+    // Add additional properties to jwt here.
+    // Properties added should be added in @/app/_types/next-auth.d.ts for type safety
+    // `jwt` callback is called first, then `session` callback is called
     // Anything set in jwt callback is available in session callback
     jwt: async ({ token, user, account }) => {
       if (user) {
         // token.identifier = user.identifier;
       }
       if (account?.provider === "google" && user) {
-        // Create UserProfile if it doesn't exist
+        // Create UserProfile if it doesn't exist, this is done here because when user is register UserProfile is created
+        // But when user logs in through google oAuth, It doesn't go through registration process. This results in missing userprofile row.
         await prisma.userProfile.upsert({
           where: { userId: user.id },
           update: {},
@@ -77,25 +79,19 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+    // Set additional properties in session object
     session: async ({ session, token }) => {
       if (session?.user) {
         session.user.id = token.sub;
-        // session.user.identifier = token.identifier;
       }
       return session;
     },
-    // redirect: async ({ url, baseUrl }) => {
-    //   // Allow relative redirects
-    //   if (url.startsWith("/")) return `${baseUrl}${url}`;
-
-    //   // Ensure redirects are to your domain
-    //   return url.startsWith(baseUrl) ? url : baseUrl;
-    // },
   },
   session: {
     strategy: "jwt",
     maxAge: 60 * 60, // in seconds
   },
+  // Custom pages
   pages: {
     signIn: "/login",
   },
