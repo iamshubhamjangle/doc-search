@@ -12,6 +12,15 @@ import { signJWT, verifyJWT } from "@/app/_lib/jwt";
  */
 export async function POST(request: NextRequest) {
   try {
+    if (process.env.NEXT_PUBLIC_EMAIL_SERVICE_ENABLED === "false") {
+      return new NextResponse(
+        "Resetting Password is temporarily unavailable :/",
+        {
+          status: 503,
+        }
+      );
+    }
+
     const body = await request.json();
     const { email } = body;
 

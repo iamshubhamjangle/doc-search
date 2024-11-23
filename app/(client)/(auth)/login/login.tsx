@@ -135,9 +135,11 @@ const Login: React.FC<any> = ({ searchParams }) => {
           </Button>
         </div>
         <div className="mt-6 text-center text-sm space-y-2">
-          <div className="block">
-            <Link href="/forgot-password">Forgot your password?</Link>
-          </div>
+          {process.env.NEXT_PUBLIC_EMAIL_SERVICE_ENABLED === "true" && (
+            <div className="block">
+              <Link href="/forgot-password">Forgot your password?</Link>
+            </div>
+          )}
           <div className="block">
             {searchParams?.callbackUrl ? (
               <Link
