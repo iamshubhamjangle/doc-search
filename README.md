@@ -6,37 +6,42 @@
 
 ## Getting Started
 
-1. Install the dependencies
+Step 1. Install the dependencies
 
 ```
 npm i
 ```
 
-2. Create `.env` file using `.env.example` file as reference
+Step 2. Rename the `.env.example` file to `.env` and set all the values. Make sure the provided database name in .env exist.
 
-3. Run `npx prisma migrate dev` to sync database and application
-
-4. Run the development server:
+Step 3: Apply the database schema & migrations
 
 ```
-npm run dev
+npx prisma migrate dev
 ```
 
-5. Run Prisma Studio to view DB entries in browser
-
-```
-npm run db
-```
-
-Open http://localhost:3000 with your browser to see the result.
-
-## Database migrations
+Step 4: Run the development server
 
 ```bash
-# After Modifing the Prisma schema, to push changes to DB run
-npx prisma migrate dev --name "migration-name"
+npm run dev
+# Open http://localhost:3000 with your browser to see the result
+```
 
-# Add --create-only flag to only create sql migration file and not apply it.
+Step 5: Run Prisma Studio to View DB in browser (Optional Step)
+
+```bash
+npm run db
+# Open http://localhost:5555 with your browser to see the result
+```
+
+## After Create/Modifing the Prisma schema
+
+During Development you may need to modify the prisma schema as per your project requirements. i.e. Add/Remove tables, columns, etc operation on database.
+Once the prisma.schema file is update you should execute the following to apply the changes in your database.
+
+```bash
+npx prisma migrate dev --name "migration-name" # This will create the migration .sql and apply it on database.
+npx prisma migrate dev --name "migration-name" --create-only # If you just want to create the migartion .sql file
 ```
 
 ## Todo:
