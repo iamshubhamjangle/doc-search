@@ -1,7 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent } from "@/app/(client)/_components/ui/dialog";
-import Login from "../../(auth)/login/login";
+import Login from "./login";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 
